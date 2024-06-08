@@ -11,6 +11,7 @@ config global
 	option remote_dns '1.1.1.1'
 	option use_default_dns 'direct'
 	option chinadns_ng_default_tag 'none'
+	option dns_redirect '1'
 	option use_direct_list '1'
 	option use_proxy_list '1'
 	option use_block_list '1'
@@ -39,7 +40,7 @@ config global_forwarding
 	option udp_no_redir_ports 'disable'
 	option tcp_proxy_drop_ports 'disable'
 	option udp_proxy_drop_ports '443'
-	option tcp_redir_ports '22,25,53,143,465,587,853,993,995,80,443'
+	option tcp_redir_ports '1:65535'
 	option udp_redir_ports '1:65535'
 	option accept_icmp '0'
 	option use_nft '0'
@@ -61,13 +62,15 @@ config global_other
 	option show_node_info '0'
 
 config global_rules
-	option auto_update '0'
+	option auto_update '1'
+	option week_update '7'
+	option time_update '3'
 	option chnlist_update '1'
 	option chnroute_update '1'
 	option chnroute6_update '1'
 	option gfwlist_update '1'
-	option geosite_update '0'
-	option geoip_update '0'
+	option geosite_update '1'
+	option geoip_update '1'
 	list gfwlist_url 'https://fastly.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt'
 	list chnroute_url 'https://ispip.clang.cn/all_cn.txt'
 	list chnroute_url 'https://fastly.jsdelivr.net/gh/gaoyifan/china-operator-ip@ip-lists/china.txt'
@@ -84,11 +87,8 @@ config global_app
 	option chinadns_ng '/usr/bin/chinadns-ng'
 
 config global_subscribe
-	option filter_keyword_mode '1'
-	list filter_discard_list '过期时间'
-	list filter_discard_list '剩余流量'
-	list filter_discard_list 'QQ群'
-	list filter_discard_list '官网'
+	option filter_keyword_mode '0'
+	option ss_type 'shadowsocks-rust'
 
 config nodes 'myshunt'
 	option remarks '分流总节点'
@@ -96,9 +96,9 @@ config nodes 'myshunt'
 	option protocol '_shunt'
 	option DirectGame '_direct'
 	option ProxyGame '_default'
+	option AIGC '_default'
+	option StreamingMedia '_default'
 	option Proxy '_default'
-	option Netflix '_default'
-	option OpenAI '_default'
 	option Direct '_direct'
 	option default_node 'nil'
 	option domainStrategy 'IPOnDemand'
@@ -161,9 +161,39 @@ config shunt_rules 'ProxyGame'
 	option domain_list 'geosite:category-games
 domain:store.steampowered.com'
 
-config shunt_rules 'OpenAI'
-	option remarks 'OpenAI'
-	option domain_list 'geosite:openai'
+config shunt_rules 'AIGC'
+	option remarks 'AIGC'
+	option domain_list 'geosite:openai
+geosite:anthropic
+geosite:bing
+domain:copilot.microsoft.com
+domain:designer.microsoft.com
+domain:aistudio.google.com
+domain:ai.google.dev
+domain:gemini.google.com
+domain:generativelanguage.googleapis.com
+domain:makersuite.google.com
+domain:alkalicore-pa.clients6.google.com
+domain:alkalimakersuite-pa.clients6.google.com
+domain:deepmind.com
+domain:deepmind.google
+domain:geller-pa.googleapis.com
+domain:proactivebackend-pa.googleapis.com
+domain:generativeai.google'
+
+config shunt_rules 'StreamingMedia'
+	option remarks 'StreamingMedia'
+	option domain_list 'geosite:netflix
+geosite:disney
+geosite:primevideo
+geosite:hbo
+geosite:hulu
+geosite:dazn
+geosite:hotstar
+geosite:tvb
+geosite:viu
+geosite:spotify
+geosite:tiktok'
 
 config shunt_rules 'Proxy'
 	option remarks 'Proxy'
@@ -191,10 +221,6 @@ config shunt_rules 'Proxy'
 2001:4860:4860::8844
 2606:4700:4700::1111
 2606:4700:4700::1001'
-
-config shunt_rules 'Netflix'
-	option remarks 'Netflix'
-	option domain_list 'geosite:netflix'
 
 config shunt_rules 'Direct'
 	option remarks 'Direct'
